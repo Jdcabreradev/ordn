@@ -1,6 +1,7 @@
 import 'package:ordn/models/item_priority_enum.dart';
 
 class ItemModel {
+  final int id;
   final String name;
   final String description;
   final ItemPriorityEnum priority;
@@ -8,6 +9,7 @@ class ItemModel {
   final DateTime expiresAt;
 
   ItemModel({
+    required this.id,
     required this.name,
     required this.description,
     required this.priority,
@@ -17,6 +19,7 @@ class ItemModel {
 
   factory ItemModel.fromJson(Map<String, dynamic> json) {
     return ItemModel(
+      id: json['id'] as int,
       name: json['name'] as String,
       description: json['description'] as String,
       priority: ItemPriorityEnum.values.firstWhere(
@@ -29,6 +32,7 @@ class ItemModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'name': name,
       'description': description,
       'priority': priority.name,
