@@ -8,9 +8,15 @@ class ItemViewmodel extends ChangeNotifier {
 
   List<ItemModel> get items => _items;
 
-  Future<List<ItemModel>> fetchItems() async {
+  ItemViewmodel() {
+    fetchItems();
+  }
+
+  Future<void> fetchItems() async {
     _items = await _itemService.getAllItems();
-    return _items;
+    if (_items.isNotEmpty) {
+      notifyListeners();
+    }
   }
 
   Future<void> addItem(ItemModel item) async {
@@ -24,8 +30,8 @@ class ItemViewmodel extends ChangeNotifier {
     final index = _items.indexWhere((e) => e.id == id);
     if (index != -1) {
       _items[index] = item;
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   Future<void> deleteItem(int id) async {

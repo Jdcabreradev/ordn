@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
-import 'package:ordn/views/details_screen.dart';
-import 'package:ordn/views/form_screen.dart';
-import 'package:ordn/views/home_screen.dart';
+import 'package:ordn/views/details/details_screen.dart';
+import 'package:ordn/views/form/form_screen.dart';
+import 'package:ordn/views/home/home_screen.dart';
 
 final router = GoRouter(
   initialLocation: '/',
