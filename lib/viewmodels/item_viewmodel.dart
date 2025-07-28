@@ -19,18 +19,14 @@ class ItemViewmodel extends ChangeNotifier {
     }
   }
 
-  Future<void> addItem(ItemModel item) async {
-    await _itemService.createItem(item);
-    _items.add(item);
-    notifyListeners();
-  }
-
-  Future<void> updateItem(int id, ItemModel item) async {
-    await _itemService.updateItem(id, item);
-    final index = _items.indexWhere((e) => e.id == id);
+  Future<void> addOrUpdateItem(ItemModel item) async {
+    await _itemService.updateItem(item.id, item);
+    final index = _items.indexWhere((e) => e.id == item.id);
     if (index != -1) {
+      print("item updated");
       _items[index] = item;
     }
+    print("item created");
     notifyListeners();
   }
 

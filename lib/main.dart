@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ordn/router/router.dart';
 import 'package:ordn/viewmodels/item_viewmodel.dart';
 import 'package:provider/provider.dart';
-
+  
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(
     ChangeNotifierProvider(
       create: (context) => ItemViewmodel(),
@@ -22,6 +24,7 @@ class MyApp extends StatelessWidget {
       title: "Ordn App",
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      
     );
   }
 }

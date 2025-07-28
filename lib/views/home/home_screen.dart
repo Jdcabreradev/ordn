@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ordn/viewmodels/item_viewmodel.dart';
+import 'package:ordn/views/home/widgets/item_card.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -25,17 +26,29 @@ class HomeScreen extends StatelessWidget {
       body: Consumer<ItemViewmodel>(
         builder: (context, value, child) {
           if (value.items.isEmpty) {
-            return Center(child: Text("No items available"));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.hourglass_empty, color: Colors.grey, size: 50),
+                  Text(
+                    "Aún no has añadido\n ninguna tarea",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      fontSize: 30,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
           } else {
             return ListView.builder(
               itemCount: value.items.length,
               itemBuilder: (context, index) {
                 final item = value.items[index];
-                return ListTile(
-                  title: Text(item.name),
-                  subtitle: Text(item.description),
-                  onTap: () => context.push('/details'),
-                );
+                return ItemCard(item: item);
               },
             );
           }
