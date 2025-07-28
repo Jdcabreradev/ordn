@@ -7,37 +7,50 @@ class ItemService {
 
   Future<List<String>> _getRawData() async {
     final prefs = await _prefs;
-    final data = prefs.getStringList('data');
-    return data ?? [];
+    return prefs.getStringList('data') ?? [];
   }
 
   Future<int> _getNextId() async {
     final data = await _getRawData();
-    return data.length + 1;
+    if (data.isEmpty) return 1;
+
+    int maxId = 0;
+    for (String itemJson in data) {
+      final id = jsonDecode(itemJson)['id'] as int;
+      if (id > maxId) maxId = id;
+    }
+    return maxId + 1;
+  }
+
+  int _findItemIndex(List<String> data, int id) {
+    for (int i = 0; i < data.length; i++) {
+      if (jsonDecode(data[i])['id'] == id) return i;
+    }
+    return -1;
   }
 
   Future<void> createItem(ItemModel item) async {
     final prefs = await _prefs;
     final data = await _getRawData();
-    final nextId = await _getNextId();
     final itemWithId = ItemModel(
-      id: nextId,
+      id: await _getNextId(),
       name: item.name,
       description: item.description,
       priority: item.priority,
       createdAt: item.createdAt,
       expiresAt: item.expiresAt,
     );
-    final itemJson = jsonEncode(itemWithId.toJson());
-    data.add(itemJson);
+    data.add(jsonEncode(itemWithId.toJson()));
     await prefs.setStringList('data', data);
   }
 
   Future<void> updateItem(int id, ItemModel newItem) async {
     final prefs = await _prefs;
     final data = await _getRawData();
-    final listIndex = id - 1;
-    if (listIndex < 0 || listIndex >= data.length) return;
+    final index = _findItemIndex(data, id);
+
+    if (index == -1) return;
+
     final updatedItem = ItemModel(
       id: id,
       name: newItem.name,
@@ -46,21 +59,30 @@ class ItemService {
       createdAt: newItem.createdAt,
       expiresAt: newItem.expiresAt,
     );
-    data[listIndex] = jsonEncode(updatedItem.toJson());
+    data[index] = jsonEncode(updatedItem.toJson());
     await prefs.setStringList('data', data);
   }
 
   Future<void> deleteItem(int id) async {
     final prefs = await _prefs;
     final data = await _getRawData();
-    final listIndex = id - 1;
-    if (listIndex < 0 || listIndex >= data.length) return;
-    data.removeAt(listIndex);
-    await prefs.setStringList('data', data);
+    final index = _findItemIndex(data, id);
+
+    if (index != -1) {
+      data.removeAt(index);
+      await prefs.setStringList('data', data);
+    }
   }
 
   Future<List<ItemModel>> getAllItems() async {
     final data = await _getRawData();
-    return data.map((e) => ItemModel.fromJson(jsonDecode(e))).toList();
+    List<ItemModel> items = [];
+
+    for (String itemJson in data) {
+      items.add(ItemModel.fromJson(jsonDecode(itemJson)));
+    }
+
+    items.sort((a, b) => a.expiresAt.compareTo(b.expiresAt));
+    return items;
   }
 }
