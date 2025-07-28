@@ -19,12 +19,31 @@ class _FormScreenState extends State<FormScreen> {
   late TextEditingController taskDescriptionController;
   ItemPriorityEnum? taskPriority;
   DateTime? expirationDate;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
     taskNameController = TextEditingController();
     taskDescriptionController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isInitialized) {
+      final ItemModel? existingItem =
+          GoRouterState.of(context).extra as ItemModel?;
+
+      if (existingItem != null) {
+        taskNameController.text = existingItem.name;
+        taskDescriptionController.text = existingItem.description;
+        taskPriority = existingItem.priority;
+        expirationDate = existingItem.expiresAt;
+      }
+      _isInitialized = true;
+    }
   }
 
   @override
@@ -48,25 +67,19 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ItemModel? existingItem = GoRouterState.of(context).extra as ItemModel?;
-
-    if (existingItem != null) {
-      taskNameController.text = existingItem.name;
-      taskDescriptionController.text = existingItem.description;
-      taskPriority ??= existingItem.priority;
-      expirationDate ??= existingItem.expiresAt;
-    }
+    final ItemModel? existingItem =
+        GoRouterState.of(context).extra as ItemModel?;
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_rounded, weight: 4, size: 24),
+          icon: const Icon(Icons.arrow_back_ios_rounded, size: 24),
           onPressed: () => context.pop(),
         ),
         title: Text(
           existingItem != null ? "Editar tarea" : "Crear nueva tarea",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(
@@ -87,7 +100,7 @@ class _FormScreenState extends State<FormScreen> {
               isExpanded: true,
               dropdownColor: Colors.grey[200],
               borderRadius: BorderRadius.circular(10),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
