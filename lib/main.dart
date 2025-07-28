@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
       title: "Ordn App",
       routerConfig: router,
       debugShowCheckedModeBanner: false,
-      
     );
   }
 }

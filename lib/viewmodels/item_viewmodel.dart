@@ -14,25 +14,20 @@ class ItemViewmodel extends ChangeNotifier {
 
   Future<void> fetchItems() async {
     _items = await _itemService.getAllItems();
-    if (_items.isNotEmpty) {
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   Future<void> addOrUpdateItem(ItemModel item) async {
-    await _itemService.updateItem(item.id, item);
-    final index = _items.indexWhere((e) => e.id == item.id);
-    if (index != -1) {
-      print("item updated");
-      _items[index] = item;
+    if (item.id == -1) {
+      await _itemService.createItem(item);
+    } else {
+      await _itemService.updateItem(item.id, item);
     }
-    print("item created");
-    notifyListeners();
+    await fetchItems();
   }
 
   Future<void> deleteItem(int id) async {
     await _itemService.deleteItem(id);
-    _items.removeWhere((e) => e.id == id);
-    notifyListeners();
+    await fetchItems();
   }
 }

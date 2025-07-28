@@ -50,6 +50,13 @@ class _FormScreenState extends State<FormScreen> {
   Widget build(BuildContext context) {
     ItemModel? existingItem = GoRouterState.of(context).extra as ItemModel?;
 
+    if (existingItem != null) {
+      taskNameController.text = existingItem.name;
+      taskDescriptionController.text = existingItem.description;
+      taskPriority ??= existingItem.priority;
+      expirationDate ??= existingItem.expiresAt;
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -60,7 +67,7 @@ class _FormScreenState extends State<FormScreen> {
         title: Row(
           children: [
             Text(
-              "Crear nueva tarea",
+              existingItem != null ? "Editar tarea" : "Crear nueva tarea",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -109,14 +116,12 @@ class _FormScreenState extends State<FormScreen> {
               onDateSelected: setExpirationDate,
             ),
           ),
-          Builder(
-            builder: (context) => CustomButton(
-              taskName: taskNameController.text,
-              taskDescription: taskDescriptionController.text,
-              taskPriority: taskPriority,
-              expirationDate: expirationDate,
-              existingItem: existingItem,
-            ),
+          CustomButton(
+            taskNameController: taskNameController,
+            taskDescriptionController: taskDescriptionController,
+            taskPriority: taskPriority,
+            expirationDate: expirationDate,
+            existingItem: existingItem,
           ),
         ],
       ),

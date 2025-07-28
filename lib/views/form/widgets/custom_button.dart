@@ -6,23 +6,24 @@ import 'package:ordn/models/item_model.dart';
 import 'package:ordn/models/item_priority_enum.dart';
 
 class CustomButton extends StatelessWidget {
-  final String taskName;
-  final String taskDescription;
+  final TextEditingController taskNameController;
+  final TextEditingController taskDescriptionController;
   final ItemPriorityEnum? taskPriority;
   final DateTime? expirationDate;
   final ItemModel? existingItem;
+
   const CustomButton({
     super.key,
-    required this.taskName,
-    required this.taskDescription,
+    required this.taskNameController,
+    required this.taskDescriptionController,
     required this.taskPriority,
     required this.expirationDate,
     this.existingItem,
   });
 
   bool get _isFormValid {
-    return taskName.trim().isNotEmpty &&
-        taskDescription.trim().isNotEmpty &&
+    return taskNameController.text.trim().isNotEmpty &&
+        taskDescriptionController.text.trim().isNotEmpty &&
         taskPriority != null &&
         expirationDate != null;
   }
@@ -55,31 +56,31 @@ class CustomButton extends StatelessWidget {
     final itemViewmodel = context.read<ItemViewmodel>();
 
     if (existingItem != null) {
-      // Update existing item
       await itemViewmodel.addOrUpdateItem(
         ItemModel(
           id: existingItem!.id,
-          name: taskName,
-          description: taskDescription,
+          name: taskNameController.text.trim(),
+          description: taskDescriptionController.text.trim(),
           priority: taskPriority!,
           createdAt: existingItem!.createdAt,
           expiresAt: expirationDate!,
         ),
       );
     } else {
-      // Create new item
       await itemViewmodel.addOrUpdateItem(
         ItemModel(
           id: -1,
-          name: taskName,
-          description: taskDescription,
+          name: taskNameController.text.trim(),
+          description: taskDescriptionController.text.trim(),
           priority: taskPriority!,
           createdAt: DateTime.now(),
           expiresAt: expirationDate!,
         ),
       );
+    }
+
+    if (context.mounted) {
       context.pop();
-      print("create new item");
     }
   }
 }
