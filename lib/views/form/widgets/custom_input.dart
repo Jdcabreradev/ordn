@@ -2,25 +2,26 @@ import 'package:flutter/material.dart';
 
 class CustomInput extends StatelessWidget {
   final TextEditingController controller;
-  final bool? readOnly;
+  final bool readOnly;
+
   const CustomInput({
     super.key,
     required this.controller,
-     this.readOnly = false
+    this.readOnly = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextField(
-      readOnly: readOnly!,
+      readOnly: readOnly,
       controller: controller,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 18,
         color: Colors.black,
         fontWeight: FontWeight.bold,
       ),
       cursorColor: Colors.black,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         constraints: BoxConstraints.expand(height: 45),
         border: InputBorder.none,
         contentPadding: EdgeInsets.zero,
