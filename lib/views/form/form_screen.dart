@@ -64,13 +64,9 @@ class _FormScreenState extends State<FormScreen> {
           icon: Icon(Icons.arrow_back_ios_rounded, weight: 4, size: 24),
           onPressed: () => context.pop(),
         ),
-        title: Row(
-          children: [
-            Text(
-              existingItem != null ? "Editar tarea" : "Crear nueva tarea",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
+        title: Text(
+          existingItem != null ? "Editar tarea" : "Crear nueva tarea",
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Column(

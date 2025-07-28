@@ -3,8 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ordn/models/item_model.dart';
 import 'package:ordn/models/item_priority_enum.dart';
 import 'package:intl/intl.dart';
-import 'package:ordn/viewmodels/item_viewmodel.dart';
-import 'package:provider/provider.dart';
+import 'package:ordn/utils/time_remaining.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemModel item;
@@ -24,25 +23,15 @@ class ItemCard extends StatelessWidget {
     }
   }
 
-  String _timeRemaining() {
-    final now = DateTime.now();
-    final diff = item.expiresAt.difference(now);
-    if (diff.isNegative) return "Expirada";
-    if (diff.inDays > 0) return "${diff.inDays} días";
-    if (diff.inHours > 0) return "${diff.inHours} h";
-    if (diff.inMinutes > 0) return "${diff.inMinutes} min";
-    return "¡Pronto!";
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.push('/details'),
+      onTap: () => context.push('/details', extra: item),
       child: Card(
         color: Colors.grey[200],
         margin: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
         child: SizedBox(
-          height: 125,
+          height: 110,
           child: Row(
             children: [
               Container(
@@ -77,30 +66,10 @@ class ItemCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.access_time,
-                            size: 16,
-                            color: Colors.black45,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            _timeRemaining(),
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black.withAlpha(
-                                (0.6 * 255).toInt(),
-                              ),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
                       const SizedBox(height: 6),
                       Text(
                         item.description,
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 15,
@@ -119,14 +88,27 @@ class ItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.check_circle),
-                iconSize: 36,
-                onPressed: () =>
-                    context.read<ItemViewmodel>().deleteItem(item.id),
-                tooltip: 'Marcar como completada',
+              const SizedBox(width: 15),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.access_time,
+                    size: 30,
+                    color: Colors.black45,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    timeRemaining(item),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black.withAlpha((0.6 * 255).toInt()),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 15),
             ],
           ),
         ),
